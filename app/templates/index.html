@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}AI News Aggregator - Latest AI Innovations{% endblock %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:w-72 flex-shrink-0">
+        <!-- Last Updated -->
+        {% if last_updated %}
+        <div class="bg-dark-900 rounded-xl border border-gray-800 p-4 mb-6">
+            <div class="flex items-center text-sm text-gray-400">
+                <svg class="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Last updated: {{ last_updated.strftime('%b %d, %Y %H:%M') }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Categories Filter -->
+        <div id="categories" class="bg-dark-900 rounded-xl border border-gray-800 p-4 mb-6">
+            <h2 class="text-lg font-semibold text-gray-100 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                Categories
+            </h2>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/" class="flex items-center justify-between px-3 py-2 rounded-lg {% if not selected_category %}bg-primary text-dark-950 font-medium{% else %}hover:bg-dark-800 text-gray-300{% endif %} transition">
+                        <span>All Categories</span>
+                        <span class="text-sm {% if not selected_category %}text-dark-950/70{% else %}text-gray-500{% endif %}">{{ total_count }}</span>
+                    </a>
+                </li>
+                {% for category in categories %}
+                <li>
+                    <a href="/?category={{ category|urlencode }}" 
+                       class="flex items-center justify-between px-3 py-2 rounded-lg {% if selected_category == category %}bg-primary text-dark-950 font-medium{% else %}hover:bg-dark-800 text-gray-300{% endif %} transition">
+                        <span class="truncate text-sm">{{ category }}</span>
+                        <span class="text-sm {% if selected_category == category %}text-dark-950/70{% else %}text-gray-500{% endif %}">{{ category_counts.get(category, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Sources Filter -->
+        <div id="sources" class="bg-dark-900 rounded-xl border border-gray-800 p-4">
+            <h2 class="text-lg font-semibold text-gray-100 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                </svg>
+                Sources
+            </h2>
+            <ul class="space-y-2">
+                {% for source in sources %}
+                <li>
+                    <a href="/?source={{ source|urlencode }}" 
+                       class="flex items-center justify-between px-3 py-2 rounded-lg {% if selected_source == source %}bg-secondary text-dark-950 font-medium{% else %}hover:bg-dark-800 text-gray-300{% endif %} transition">
+                        <span class="truncate text-sm">{{ source }}</span>
+                        <span class="text-sm {% if selected_source == source %}text-dark-950/70{% else %}text-gray-500{% endif %}">{{ source_counts.get(source, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1">
+        <!-- Page Header -->
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">
+                {% if selected_category %}
+                    {{ selected_category }}
+                {% elif selected_source %}
+                    {{ selected_source }}
+                {% else %}
+                    Latest AI News
+                {% endif %}
+            </h1>
+            <p class="text-gray-400 mt-1">{{ total_count }} articles from the past 7 days</p>
+        </div>
+
+        <!-- Articles Grid -->
+        {% if articles %}
+        <div class="grid gap-6">
+            {% for article in articles %}
+            <article class="bg-dark-900 rounded-xl border border-gray-800 hover:border-primary/30 transition overflow-hidden">
+                <div class="p-6">
+                    <!-- Header -->
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/30">
+                                {{ article.source_name }}
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary/20 text-accent border border-secondary/30">
+                                {{ article.category }}
+                            </span>
+                        </div>
+                        {% if article.published_at %}
+                        <time class="text-sm text-gray-500" datetime="{{ article.published_at.isoformat() }}">
+                            {{ article.published_at.strftime('%b %d, %Y') }}
+                        </time>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Title -->
+                    <h2 class="text-xl font-semibold text-gray-100 mb-3 hover:text-primary transition">
+                        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">
+                            {{ article.title }}
+                        </a>
+                    </h2>
+                    
+                    <!-- Summary -->
+                    {% if article.summary %}
+                    <p class="text-gray-400 leading-relaxed mb-4">
+                        {{ article.summary }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Footer -->
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+                        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center text-primary hover:text-accent transition font-medium">
+                            Read full article
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                            </svg>
+                        </a>
+                        <span class="text-xs text-gray-600">
+                            ID: {{ article.id }}
+                        </span>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="bg-dark-900 rounded-xl border border-gray-800 p-12 text-center">
+            <svg class="w-16 h-16 mx-auto text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+            </svg>
+            <h3 class="text-xl font-semibold text-gray-300 mb-2">No articles found</h3>
+            <p class="text-gray-500 mb-4">Run the scheduler to fetch the latest AI news.</p>
+            <code class="bg-dark-800 px-4 py-2 rounded text-sm text-primary border border-gray-700">python scheduler.py --once</code>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

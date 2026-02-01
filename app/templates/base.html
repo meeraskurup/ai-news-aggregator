@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI News Aggregator{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#22c55e',
+                        secondary: '#16a34a',
+                        accent: '#4ade80',
+                        dark: {
+                            950: '#0a0a0a',
+                            900: '#111111',
+                            850: '#1a1a1a',
+                            800: '#222222',
+                            700: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-950 min-h-screen text-gray-100">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-dark-900 to-dark-800 border-b border-green-500/20 shadow-lg shadow-green-500/5">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">AI News Aggregator</h1>
+                        <p class="text-sm text-green-400/70">Latest AI Innovations Daily</p>
+                    </div>
+                </a>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-gray-300 hover:text-primary transition">Home</a>
+                    <a href="#categories" class="text-gray-300 hover:text-primary transition">Categories</a>
+                    <a href="#sources" class="text-gray-300 hover:text-primary transition">Sources</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-900 border-t border-gray-800 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-3">AI News Aggregator</h3>
+                    <p class="text-sm text-gray-500">Stay informed about the latest developments in artificial intelligence from the world's most reputable tech news sources.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Categories</h3>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="/?category=Large Language Models (LLMs)" class="text-gray-500 hover:text-primary transition">LLMs</a></li>
+                        <li><a href="/?category=AI Research & Breakthroughs" class="text-gray-500 hover:text-primary transition">Research</a></li>
+                        <li><a href="/?category=AI Ethics & Regulation" class="text-gray-500 hover:text-primary transition">Ethics</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-3">About</h3>
+                    <p class="text-sm text-gray-500">Aggregating news from 10 reputable sources including MIT Technology Review, TechCrunch, The Verge, and more.</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-6 text-center text-sm text-gray-600">
+                <p>&copy; 2026 AI News Aggregator. Updated daily.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

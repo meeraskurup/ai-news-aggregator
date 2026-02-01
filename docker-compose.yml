@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=sqlite:///./data/news.db
+      - DAILY_UPDATE_HOUR=6
+      - DAILY_UPDATE_MINUTE=0
+    restart: unless-stopped
+
+  scheduler:
+    build: .
+    volumes:
+      - ./data:/app/data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=sqlite:///./data/news.db
+      - DAILY_UPDATE_HOUR=6
+      - DAILY_UPDATE_MINUTE=0
+    command: python scheduler.py
+    restart: unless-stopped
+    depends_on:
+      - web
