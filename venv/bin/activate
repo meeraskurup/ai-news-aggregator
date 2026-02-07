@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/meerakurup/Downloads/cursor-ai/ai-news-aggregator/venv"
+VIRTUAL_ENV="/Users/meerakurup/Downloads/Agents/ai-news-aggregator/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
